@@ -1,0 +1,4 @@
+2024-07-19 12:22:10 - ERROR - Connection timeout while accessing /api/data
+2024-07-19 12:22:15 - WARNING - Disk usage at 85%
+2024-07-19 12:22:20 - INFO - User login success
+2024-07-19 12:25:40 - ERROR - Null pointer exception occurred in module X
