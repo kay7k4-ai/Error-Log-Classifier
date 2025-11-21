@@ -55,18 +55,8 @@ This helps understand:
 - boundary checks
 - safe coding practices
 
-### ✔ 5. Documentation & Evidence
-- Organized files under the `day2/` folder  
-- Saved screenshots of:
-  - Terminal error output  
-  - Debugger paused view  
-  - Correct output after fixing  
-
 **Summary:**  
 Day 2 was about building the foundation for the main project by learning how errors are created, logged, and analyzed.  
 This prepares the data pipeline needed for future classification tasks.
 
 ---
-
-# 📁 Project Structure (so far)
-
