@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Error Log Classifier</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="header-top">
+      <button id="modeToggle" class="mode-toggle" aria-label="Toggle Dark/Light Mode">🌙 Dark Mode</button>
+    </div>
+    <h1>Error Log Classifier</h1>
+    <p>Upload a log file or write/paste your logs below and get classification results.</p>
+  </header>
+
+  <main>
+    <div class="input-section">
+      <label for="logfile" class="btn-upload">
+        Browse Files
+        <input type="file" id="logfile" accept=".txt,.log" />
+      </label>
+      <span class="or-text">OR</span>
+      <textarea id="logtext" placeholder="Or write/paste your logs here..." rows="10"></textarea>
+    </div>
+
+    <button class="btn-submit" onclick="classifyLog()">Classify Log</button>
+
+    <div id="results" class="results" aria-live="polite" aria-atomic="true">
+      <p>Classification results will appear here...</p>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 Error Log Classifier Project</p>
+  </footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
