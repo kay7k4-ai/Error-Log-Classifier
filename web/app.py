@@ -9,8 +9,8 @@ from src.preprocessing.cleaner import clean_logs
 
 app = Flask(
     __name__,
-    template_folder="../templates",
-    static_folder="../static"
+    template_folder="templates",
+    static_folder="static"
 )
 
 model = joblib.load(os.path.join(ROOT, "model.pkl"))

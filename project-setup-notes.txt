@@ -1,5 +1,0 @@
-Day 1 Setup Started:
-- Created project repository.
-- Cloned repository into VS Code.
-- Initialized basic folder structure.
-- Prepare for log reader implementation.
