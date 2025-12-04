@@ -2,28 +2,20 @@ import os
 import sys
 import joblib
 
-# -------------------------------------------------------
 # FIX PATHS
-# -------------------------------------------------------
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 sys.path.append(PROJECT_ROOT)
 
 from src.preprocessing.cleaner import clean_logs
 
-
-# -------------------------------------------------------
 # LOAD MODEL + VECTORIZER
-# -------------------------------------------------------
 MODEL_PATH = os.path.join(PROJECT_ROOT, "model.pkl")
 VEC_PATH = os.path.join(PROJECT_ROOT, "vectorizer.pkl")
 
 model = joblib.load(MODEL_PATH)
 vectorizer = joblib.load(VEC_PATH)
 
-
-# -------------------------------------------------------
 # PREDICT FUNCTION
-# -------------------------------------------------------
 def predict_log(log_text):
     """
     Predict the category of a single log line.
@@ -40,10 +32,7 @@ def predict_log(log_text):
 
     return prediction
 
-
-# -------------------------------------------------------
 # TESTING (Run this file directly)
-# -------------------------------------------------------
 if __name__ == "__main__":
 
     print("\n=== TESTING PREDICTOR ===")

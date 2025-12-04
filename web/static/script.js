@@ -3,17 +3,13 @@ const dropArea = document.getElementById("dropArea");
 const fileInput = document.getElementById("fileInput");
 const fileName = document.getElementById("fileName");
 
-/* -------------------------------
-   THEME TOGGLE
---------------------------------*/
+/* THEME TOGGLE */
 themeToggle.addEventListener("click", () => {
     document.body.classList.toggle("dark");
     themeToggle.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
 });
 
-/* -------------------------------
-   DRAG & DROP
---------------------------------*/
+/* DRAG & DROP */
 dropArea.addEventListener("click", () => fileInput.click());
 
 fileInput.addEventListener("change", () => {

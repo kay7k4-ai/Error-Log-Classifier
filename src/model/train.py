@@ -5,10 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 import joblib
 
-# -------------------------------------------------------
 # FIX PATHS
-# -------------------------------------------------------
-
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 sys.path.append(PROJECT_ROOT)
 
@@ -16,11 +13,8 @@ from src.preprocessor import read_logs
 from src.preprocessing.cleaner import clean_logs
 from src.model.vectorizer import fit_vectorizer
 
-
-# -------------------------------------------------------
 # TEMPORARY LABELING FUNCTION
 # (We label logs using simple keywords to train ML)
-# -------------------------------------------------------
 def assign_labels(cleaned_logs):
     labels = []
     for line in cleaned_logs:
@@ -36,10 +30,7 @@ def assign_labels(cleaned_logs):
             labels.append("UNKNOWN")
     return labels
 
-
-# -------------------------------------------------------
 # MAIN TRAINING PIPELINE
-# -------------------------------------------------------
 if __name__ == "__main__":
 
     print("\n=== TRAINING ERROR LOG CLASSIFIER ===")

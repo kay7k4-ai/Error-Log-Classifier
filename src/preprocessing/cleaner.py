@@ -2,9 +2,7 @@ import re
 import os
 import sys
 
-# ---------------------------------------------------
 # FIX IMPORT PATHS AUTOMATICALLY
-# ---------------------------------------------------
 
 # Get project root directory (two levels up from this file)
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -13,10 +11,7 @@ sys.path.append(PROJECT_ROOT)
 # Now import works from ANY location
 from src.preprocessor import read_logs
 
-
-# ---------------------------------------------------
 # SIMPLE CLEANING FUNCTIONS (NO NLTK)
-# ---------------------------------------------------
 
 stop_words = {
     "the","and","is","to","for","in","on","at","a","an","of","this","that","it",
@@ -53,11 +48,7 @@ def clean_logs(log_list):
     """Cleans every log line."""
     return [clean_line(line) for line in log_list]
 
-
-# ---------------------------------------------------
 # RUN DIRECTLY FOR TESTING
-# ---------------------------------------------------
-
 if __name__ == "__main__":
 
     # ALWAYS use full path to your sample logs

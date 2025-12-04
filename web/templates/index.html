@@ -1,79 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Error Log Classifier</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Error Log Classifier</title>
+        <link rel="stylesheet" href="/static/style.css" />
+    </head>
 
-<body>
-
-    <!-- NAVBAR -->
-    <div class="navbar">
-        <div class="logo">⚡ LogClassifier</div>
-        <div class="theme-toggle" id="themeToggle">🌙</div>
-    </div>
-
-    <!-- MAIN GRID -->
-    <div class="main-container">
-
-        <!-- LEFT PANEL (Input) -->
-        <div class="card">
-
-            <h2>Input Logs</h2>
-            <p class="subtext">Upload a .txt/.log file or paste logs manually</p>
-
-            <form id="uploadForm" method="POST" enctype="multipart/form-data">
-
-                <!-- Drag and drop area -->
-                <label class="dropzone" id="dropArea">
-                    <input type="file" id="fileInput" name="logfile" accept=".txt,.log">
-                    <div>📄 Drag & Drop log file<br><span class="small">or click here</span></div>
-                </label>
-
-                <div id="fileName" class="file-name">No file selected</div>
-
-                <div class="or">— OR —</div>
-
-                <!-- Paste Logs -->
-                <textarea id="pasteBox" name="paste_logs"
-                    placeholder="Paste logs here...">{{ pasted if pasted }}</textarea>
-
-                <!-- Submit -->
-                <button class="btn-primary" id="submitBtn" type="submit">
-                    Classify Logs
-                </button>
-
-            </form>
-
+    <body>
+        <!-- NAVBAR -->
+        <div class="navbar">
+            <div class="logo">⚡ LogClassifier</div>
+            <div class="theme-toggle" id="themeToggle">🌙</div>
         </div>
 
-        <!-- RIGHT PANEL (Results) -->
-        <div class="card">
+        <!-- MAIN GRID -->
+        <div class="main-container">
+            <!-- LEFT PANEL (Input) -->
+            <div class="card">
+                <h2>Input Logs</h2>
+                <p class="subtext">
+                    Upload a .txt/.log file or paste logs manually
+                </p>
 
-            <h2>Results</h2>
+                <form
+                    id="uploadForm"
+                    method="POST"
+                    enctype="multipart/form-data"
+                >
+                    <!-- Drag and drop area -->
+                    <label class="dropzone" id="dropArea">
+                        <input
+                            type="file"
+                            id="fileInput"
+                            name="logfile"
+                            accept=".txt,.log"
+                        />
+                        <div>
+                            📄 Drag & Drop log file<br /><span class="small"
+                                >or click here</span
+                            >
+                        </div>
+                    </label>
 
-            {% if result %}
-            <div class="result-box">
-                {% for line, cat in result %}
-                <div class="result-line">
-                    <span class="r-line">{{ line }}</span>
-                    <span class="r-cat {{ cat }}">{{ cat }}</span>
-                </div>
-                {% endfor %}
+                    <div id="fileName" class="file-name">No file selected</div>
+
+                    <div class="or">— OR —</div>
+
+                    <!-- Paste Logs -->
+                    <textarea
+                        id="pasteBox"
+                        name="paste_logs"
+                        placeholder="Paste logs here..."
+                    >
+{{ pasted if pasted }}</textarea
+                    >
+
+                    <!-- Submit -->
+                    <button class="btn-primary" id="submitBtn" type="submit">
+                        Classify Logs
+                    </button>
+                </form>
             </div>
-            {% else %}
-            <div class="empty">No logs classified yet.</div>
-            {% endif %}
 
+            <!-- RIGHT PANEL (Results) -->
+            <div class="card">
+                <h2>Results</h2>
+
+                {% if result %}
+                <div class="result-box">
+                    {% for line, cat in result %}
+                    <div class="result-line">
+                        <span class="r-line">{{ line }}</span>
+                        <span class="r-cat {{ cat }}">{{ cat }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty">No logs classified yet.</div>
+                {% endif %}
+            </div>
         </div>
 
-    </div>
+        <div class="footer">Made for OJT • © 2024</div>
 
-    <div class="footer">Made for OJT • © 2024</div>
-
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-
-</body>
+        <script src="/static/script.js"></script>
+    </body>
 </html>
