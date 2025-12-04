@@ -1,0 +1,249 @@
+/* ---------------------------------------------------
+   BASE
+----------------------------------------------------*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background: linear-gradient(145deg, #dff1ff, #b9e6ff, #c1f4f0);
+    min-height: 100vh;
+    color: #0a2540;
+    transition: 0.4s ease;
+}
+
+body.dark {
+    background: linear-gradient(145deg, #0d1117, #101b2d);
+    color: #dce6f3;
+}
+
+/* ---------------------------------------------------
+   NAVBAR
+----------------------------------------------------*/
+.navbar {
+    padding: 18px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-weight: 700;
+    font-size: 1.6rem;
+}
+
+.theme-toggle {
+    font-size: 1.7rem;
+    cursor: pointer;
+}
+
+/* ---------------------------------------------------
+   GRID LAYOUT
+----------------------------------------------------*/
+.main-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 35px 40px;
+    gap: 30px;
+}
+
+/* ---------------------------------------------------
+   CARD (GLASSMORPHISM)
+----------------------------------------------------*/
+.card {
+    background: rgba(255, 255, 255, 0.75);
+    padding: 25px;
+    border-radius: 18px;
+    position: relative;
+    transition: transform .25s ease;
+}
+
+body.dark .card {
+    background: rgba(20, 28, 44, 0.8);
+}
+
+/* BORDER GLOW ONLY - Clean */
+.card::after {
+    content: "";
+    position: absolute;
+    inset: 0;             /* covers the card exactly */
+    padding: 3px;         /* thickness of the glow border */
+    border-radius: inherit;
+    background: linear-gradient(120deg, #147bff, #65e0ff, #1fd6c6);
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    z-index: 1;
+    transition: opacity 0.3s ease;
+}
+
+.card:hover::after {
+    opacity: 1;
+    animation: glowMove 3s linear infinite;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+}
+
+
+@keyframes glowMove {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+}
+
+/* ---------------------------------------------------
+   DRAG & DROP ZONE
+----------------------------------------------------*/
+.dropzone {
+    height: 150px;
+    border: 2px dashed #7ec9ff;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 20px;
+    position: relative;
+    transition: .3s;
+}
+
+.dropzone input {
+    display: none;
+}
+
+/* Border glow on dropzone */
+.dropzone::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 16px;
+    background: linear-gradient(120deg, #147bff, #65e0ff, #1fd6c6);
+    background-size: 250% 250%;
+    opacity: 0;
+    z-index: -1;
+    filter: blur(0px);
+    transition: opacity .3s ease, filter .3s ease;
+}
+
+.dropzone:hover::after {
+    opacity: 1;
+    filter: blur(6px);
+    animation: glowMove 3s linear infinite;
+}
+
+.small {
+    font-size: .8rem;
+    opacity: .7;
+}
+
+/* Selected file name */
+.file-name {
+    margin-top: 10px;
+    font-size: .9rem;
+    color: #0a2540;
+}
+
+.or {
+    text-align: center;
+    margin: 18px 0;
+    font-weight: 700;
+    color: #0a2540a9;
+}
+
+/* ---------------------------------------------------
+   TEXTAREA
+----------------------------------------------------*/
+textarea {
+    width: 100%;
+    height: 170px;
+    padding: 12px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.7);
+    border: none;
+    resize: none;
+    outline: none;
+    font-size: 0.95rem;
+    color: #0a2540;
+}
+
+body.dark textarea {
+    background: rgba(255,255,255,0.1);
+    color: #dce6f3;
+}
+
+/* ---------------------------------------------------
+   BUTTON
+----------------------------------------------------*/
+.btn-primary {
+    width: 100%;
+    padding: 14px;
+    margin-top: 20px;
+    border-radius: 14px;
+    background: linear-gradient(120deg, #147bff, #00b8ff, #1fd6c6);
+    background-size: 200% 200%;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: .28s ease;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    transform: scale(1.03);
+}
+
+/* ---------------------------------------------------
+   RESULTS
+----------------------------------------------------*/
+.result-box {
+    background: rgba(255,255,255,0.7);
+    padding: 18px;
+    border-radius: 16px;
+}
+
+body.dark .result-box {
+    background: rgba(20,26,36,0.85);
+}
+
+.result-line {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+}
+
+.r-cat {
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.ERROR { color: #ef4444; }
+.WARNING { color: #f59e0b; }
+.INFO { color: #147bff; }
+.CRITICAL { color: #a855f7; }
+
+.empty {
+    opacity: .6;
+    margin-top: 10px;
+}
+
+/* ---------------------------------------------------
+   FOOTER
+----------------------------------------------------*/
+.footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-bottom: 25px;
+    opacity: .8;
+}
