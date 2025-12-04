@@ -3,5 +3,5 @@ services:
     name: error-log-classifier
     env: python
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn app:app"
+    startCommand: "gunicorn web.app:app"
     plan: free
