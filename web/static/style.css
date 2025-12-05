@@ -105,9 +105,7 @@ body.dark .card {
     100% {background-position: 0% 50%;}
 }
 
-/* ---------------------------------------------------
-   DRAG & DROP ZONE
-----------------------------------------------------*/
+/* DRAG & DROP ZONE */
 .dropzone {
     height: 150px;
     border: 2px dashed #7ec9ff;
