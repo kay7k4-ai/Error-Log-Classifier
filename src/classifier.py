@@ -1,11 +1,14 @@
-def classify_log_line(line):
-    line = line.lower()
-    if "critical" in line:
+def rule_classify(line: str):
+    """
+    Simple fallback: look for keywords in raw or cleaned line.
+    """
+    s = line.lower()
+    if "critical" in s:
         return "CRITICAL"
-    if "error" in line:
+    if "error" in s:
         return "ERROR"
-    if "warning" in line:
+    if "warning" in s:
         return "WARNING"
-    if "info" in line:
+    if "info" in s:
         return "INFO"
     return "UNKNOWN"

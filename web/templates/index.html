@@ -1,109 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Error Log Classifier</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Error Log Classifier</title>
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='style.css') }}"
+        />
+    </head>
 
-<body>
-
-    <!-- NAVBAR -->
-    <div class="navbar">
-        <div class="logo">⚡ LogClassifier</div>
-        <div class="theme-toggle" id="themeToggle">🌙</div>
-    </div>
-
-    <!-- MAIN GRID -->
-    <div class="main-container">
-
-        <!-- LEFT PANEL (Input) -->
-        <div class="card">
-
-            <h2>Input Logs</h2>
-            <p class="subtext">Upload a .txt/.log file or paste logs manually</p>
-
-            <form id="uploadForm" method="POST" enctype="multipart/form-data">
-
-                <!-- Drag and drop area -->
-                <label class="dropzone" id="dropArea">
-                    <input type="file" id="fileInput" name="logfile" accept=".txt,.log">
-                    <div>📄 Drag & Drop log file<br><span class="small">or click here</span></div>
-                </label>
-
-                <div id="fileName" class="file-name">No file selected</div>
-
-                <div class="or">— OR —</div>
-
-                <!-- Paste Logs -->
-                <textarea id="pasteBox" name="paste_logs"
-                    placeholder="Paste logs here...">{{ pasted if pasted }}</textarea>
-
-                <!-- Submit -->
-                <button class="btn-primary" id="submitBtn" type="submit">
-                    Classify Logs
-                </button>
-
-            </form>
-
+    <body>
+        <!-- NAVBAR -->
+        <div class="navbar">
+            <div class="logo">⚡ LogClassifier</div>
+            <div class="theme-toggle" id="themeToggle">🌙</div>
         </div>
 
-        <!-- RIGHT PANEL (Results) -->
-        <div class="card">
+        <!-- MAIN GRID -->
+        <div class="main-container">
+            <!-- LEFT PANEL (Input) -->
+            <div class="card">
+                <h2>Input Logs</h2>
+                <p class="subtext">
+                    Upload a .txt/.log file or paste logs manually
+                </p>
 
-            <h2>Results</h2>
+                <form
+                    id="uploadForm"
+                    method="POST"
+                    enctype="multipart/form-data"
+                >
+                    <!-- Drag and drop area -->
+                    <label class="dropzone" id="dropArea">
+                        <input
+                            type="file"
+                            id="fileInput"
+                            name="logfile"
+                            accept=".txt,.log"
+                        />
+                        <div>
+                            📄 Drag & Drop log file<br /><span class="small"
+                                >or click here</span
+                            >
+                        </div>
+                    </label>
 
-            {% if result %}
-            <div class="result-box">
-                {% for line, cat in result %}
-                <div class="result-line">
-                    <span class="r-line">{{ line }}</span>
-                    <span class="r-cat {{ cat }}">{{ cat }}</span>
-                </div>
-                {% endfor %}
+                    <div id="fileName" class="file-name">No file selected</div>
+
+                    <div class="or">— OR —</div>
+
+                    <!-- Paste Logs -->
+                    <textarea
+                        id="pasteBox"
+                        name="paste_logs"
+                        placeholder="Paste logs here..."
+                    >
+{{ pasted if pasted }}</textarea
+                    >
+
+                    <!-- Submit -->
+                    <button class="btn-primary" id="submitBtn" type="submit">
+                        Classify Logs
+                    </button>
+                    
+                    <button type="button" id="clearBtn" class="btn-secondary">
+                        Clear All
+                    </button>
+                </form>
             </div>
-            {% else %}
-            <div class="empty">No logs classified yet.</div>
-            {% endif %}
 
+            <!-- RIGHT PANEL (Results) -->
+            <div class="card">
+                <h2>Results</h2>
+
+                {% if result %}
+                <div class="result-box">
+                    {% for line, cat in result %}
+                    <div class="result-line">
+                        <span class="r-line">{{ line }}</span>
+                        <span class="r-cat {{ cat }}">{{ cat }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty">No logs classified yet.</div>
+                {% endif %}
+            </div>
         </div>
 
-    </div>
-    
-    <div class="about-section">
-    <h3>About This Project</h3>
-    <p>
-        The <strong>Error Log Classifier</strong> is a mini-tool built to help developers quickly 
-        understand large log files by automatically categorizing each log line into 
-        <span class="highlight">ERROR</span>, <span class="highlight">WARNING</span>, 
-        <span class="highlight">INFO</span>, or <span class="highlight">CRITICAL</span>.
-    </p>
+        <div class="about-section">
+            <h3>About This Project</h3>
+            <p>
+                The <strong>Error Log Classifier</strong> is a mini-tool built
+                to help developers quickly understand large log files by
+                automatically categorizing each log line into
+                <span class="highlight">ERROR</span>,
+                <span class="highlight">WARNING</span>,
+                <span class="highlight">INFO</span>, or
+                <span class="highlight">CRITICAL</span>.
+            </p>
 
-    <p>
-        Debugging becomes faster when logs are organized — and that is exactly what this tool 
-        tries to simplify. Just upload a <strong>.txt</strong> or <strong>.log</strong> file, or 
-        paste your logs manually, and the classifier instantly analyzes and labels them using 
-        machine learning.
-    </p>
+            <p>
+                Debugging becomes faster when logs are organized — and that is
+                exactly what this tool tries to simplify. Just upload a
+                <strong>.txt</strong> or <strong>.log</strong> file, or paste
+                your logs manually, and the classifier instantly analyzes and
+                labels them using machine learning.
+            </p>
 
-    <p>
-        This project was created as part of our <strong>OJT (On-the-Job Training)</strong>.  
-        Even though the website may not be perfect, we genuinely worked hard to build it — from 
-        learning Flask, handling machine learning models, to designing the UI and making it user-friendly.
-    </p>
+            <p>
+                This project was created as part of our
+                <strong>OJT (On-the-Job Training)</strong>. Even though the
+                website may not be perfect, we genuinely worked hard to build it
+                — from learning Flask, handling machine learning models, to
+                designing the UI and making it user-friendly.
+            </p>
 
-    <p>
-        We hope to improve this tool further in the future with more features, smarter 
-        classifications, and a better interface.  
-        Thank you for checking out our project! 💙
-    </p>
-</div>
+            <p>
+                We hope to improve this tool further in the future with more
+                features, smarter classifications, and a better interface. Thank
+                you for checking out our project! 💙
+            </p>
+        </div>
 
+        <div class="footer">Made for OJT • © 2024</div>
 
-    <div class="footer">Made for OJT • © 2024</div>
-
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-
-</body>
+        <script src="{{ url_for('static', filename='script.js') }}"></script>
+    </body>
 </html>

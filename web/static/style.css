@@ -293,3 +293,21 @@ body.dark .about-section {
     font-weight: 700;
     color: #147bff;
 }
+
+.btn-secondary {
+    width: 100%;
+    padding: 14px;
+    margin-top: 12px;
+    border-radius: 14px;
+    background: #d0d7e1;
+    color: #0a2540;
+    border: none;
+    cursor: pointer;
+    transition: .25s ease;
+    font-weight: 600;
+}
+
+.btn-secondary:hover {
+    transform: scale(1.03);
+    background: #c3ccd8;
+}

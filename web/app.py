@@ -3,57 +3,82 @@ import sys
 from flask import Flask, render_template, request
 import joblib
 
-# PATH FIX
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-sys.path.append(PROJECT_ROOT)
+# -------------------------------------------------------
+# ABSOLUTE PATH FIX (100% reliable everywhere)
+# -------------------------------------------------------
+# Path of: Error-Log-Classifier/web/app.py
+CURRENT_FILE = os.path.abspath(__file__)
 
-from src.preprocessing.cleaner import clean_logs
-from src.model.predict import predict_log
+# Move one level up → Error-Log-Classifier/
+PROJECT_ROOT = os.path.dirname(os.path.dirname(CURRENT_FILE))
 
-app = Flask(__name__)
+# Allow imports like src.preprocessing.cleaner
+sys.path.insert(0, PROJECT_ROOT)
 
-# Load model and vectorizer
+# Model paths
 MODEL_PATH = os.path.join(PROJECT_ROOT, "model.pkl")
 VEC_PATH = os.path.join(PROJECT_ROOT, "vectorizer.pkl")
 
+# -------------------------------------------------------
+# LOAD MODEL + VECTORIZER
+# -------------------------------------------------------
 model = joblib.load(MODEL_PATH)
 vectorizer = joblib.load(VEC_PATH)
 
+# Import AFTER fixing sys.path
+from src.preprocessing.cleaner import clean_logs
+from src.model.predict import predict_log
 
+
+# -------------------------------------------------------
+# FLASK APP
+# -------------------------------------------------------
+app = Flask(
+    __name__, 
+    static_folder="static", 
+    template_folder="templates"
+)
+
+
+# -------------------------------------------------------
+# ROUTE — MAIN PAGE
+# -------------------------------------------------------
 @app.route("/", methods=["GET", "POST"])
 def index():
-
-    pasted = ""
     result = None
+    pasted = ""
 
     if request.method == "POST":
-
+        # ------------------------------
+        # 1. Get pasted logs
+        # ------------------------------
         pasted = request.form.get("paste_logs", "").strip()
+
+        # ------------------------------
+        # 2. Get uploaded file
+        # ------------------------------
         file = request.files.get("logfile")
 
-        raw_logs = []
+        if file and file.filename:  
+            pasted = file.read().decode("utf-8")
 
-        # 1️⃣ If user pasted logs → PRIORITY
+        # ------------------------------
+        # 3. Classify logs (only if input exists)
+        # ------------------------------
         if pasted:
-            raw_logs = pasted.splitlines()
+            raw_lines = [line for line in pasted.split("\n") if line.strip()]
 
-        # 2️⃣ If file is uploaded → use it
-        elif file and file.filename:
-            raw_logs = file.read().decode("utf-8").splitlines()
+            cleaned = clean_logs(raw_lines)
+            vectors = vectorizer.transform(cleaned)
+            predictions = model.predict(vectors)
 
-        # 3️⃣ If nothing given → return empty
-        if not raw_logs:
-            return render_template("index.html", result=None, pasted=pasted)
-
-        # Clean, vectorize, predict
-        cleaned = clean_logs(raw_logs)
-        vectors = vectorizer.transform(cleaned)
-        predictions = model.predict(vectors)
-
-        result = list(zip(raw_logs, predictions))
+            result = list(zip(raw_lines, predictions))
 
     return render_template("index.html", result=result, pasted=pasted)
 
 
+# -------------------------------------------------------
+# RUN SERVER
+# -------------------------------------------------------
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=10000, debug=True)

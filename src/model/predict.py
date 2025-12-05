@@ -1,45 +1,52 @@
-import os
-import sys
-import joblib
-
-# FIX PATHS
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-sys.path.append(PROJECT_ROOT)
-
+import os, joblib
 from src.preprocessing.cleaner import clean_logs
+from src.classifier import rule_classify
 
-# LOAD MODEL + VECTORIZER
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+
 MODEL_PATH = os.path.join(PROJECT_ROOT, "model.pkl")
 VEC_PATH = os.path.join(PROJECT_ROOT, "vectorizer.pkl")
 
-model = joblib.load(MODEL_PATH)
-vectorizer = joblib.load(VEC_PATH)
+# Lazy loader
+_model = None
+_vectorizer = None
+def _ensure():
+    global _model, _vectorizer
+    if _model is None or _vectorizer is None:
+        _model = joblib.load(MODEL_PATH)
+        _vectorizer = joblib.load(VEC_PATH)
+    return _model, _vectorizer
 
-# PREDICT FUNCTION
 def predict_log(log_text):
     """
-    Predict the category of a single log line.
+    Predict category for a single log line.
+    Uses model + fallback rule-based classifier.
     """
-
-    # 1. Clean text
+    model, vectorizer = _ensure()
     cleaned = clean_logs([log_text])
+    vec = vectorizer.transform(cleaned)
+    pred = model.predict(vec)[0]
+    # If model produces something odd, fallback
+    if pred is None or pred == "" or pred == "UNKNOWN":
+        return rule_classify(log_text)
+    return pred
 
-    # 2. Convert to TF-IDF
-    vector = vectorizer.transform(cleaned)
-
-    # 3. Predict
-    prediction = model.predict(vector)[0]
-
-    return prediction
-
-# TESTING (Run this file directly)
-if __name__ == "__main__":
-
-    print("\n=== TESTING PREDICTOR ===")
-
-    sample = "2024-10-21 10:44:22 - WARNING - Low disk space detected"
-
-    result = predict_log(sample)
-
-    print(f"Log: {sample}")
-    print("Predicted Category:", result)
+def predict_batch(raw_logs, vectorizer_obj=None, model_obj=None):
+    """
+    Predict batch of raw logs. If model_obj/vectorizer_obj passed, use them.
+    Returns list of tuples (raw_line, category)
+    """
+    model_local = model_obj
+    vectorizer_local = vectorizer_obj
+    if model_local is None or vectorizer_local is None:
+        model_local, vectorizer_local = _ensure()
+    cleaned = clean_logs(raw_logs)
+    vectors = vectorizer_local.transform(cleaned)
+    preds = model_local.predict(vectors)
+    # apply fallback per line if needed
+    out = []
+    for raw, p in zip(raw_logs, preds):
+        if not p or p == "UNKNOWN":
+            p = rule_classify(raw)
+        out.append((raw, p))
+    return out

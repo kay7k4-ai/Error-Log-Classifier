@@ -48,3 +48,16 @@ dropArea.addEventListener("drop", (e) => {
         fileName.textContent = e.dataTransfer.files[0].name;
     }
 });
+
+// CLEAR BUTTON
+const clearBtn = document.getElementById("clearBtn");
+const pasteBox = document.getElementById("pasteBox");
+const resultBox = document.querySelector(".result-box");
+
+clearBtn.addEventListener("click", () => {
+    pasteBox.value = "";
+    fileInput.value = "";
+    fileName.textContent = "No file selected";
+
+    if (resultBox) resultBox.innerHTML = "<div class='empty'>No logs classified yet.</div>";
+});
