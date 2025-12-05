@@ -62,7 +62,7 @@ body.dark {
 }
 
 body.dark .card {
-    background: rgba(20, 28, 44, 0.8);
+    background: rgba(26, 40, 68, 80%);
 }
 
 /* lift on hover */
@@ -148,6 +148,18 @@ body.dark .card {
     animation: glowMove 3s linear infinite;
 }
 
+/* DARK MODE — super soft minimal glow */
+body.dark .dropzone:hover::after {
+    opacity: 0.5 !important;   /* very very soft */
+    filter: blur(1.5px) !important;  /* tiny glow */
+    background: linear-gradient(
+        120deg,
+        #124361,
+        #0f5b73,
+        #0d6652
+    ) !important;  /* darker, muted colors */
+}
+
 .small {
     font-size: .8rem;
     opacity: .7;
@@ -184,7 +196,7 @@ textarea {
 }
 
 body.dark textarea {
-    background: rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.132);
     color: #dce6f3;
 }
 
@@ -252,4 +264,32 @@ body.dark .result-box {
     margin-top: 40px;
     padding-bottom: 25px;
     opacity: .8;
+}
+
+.about-section {
+    max-width: 80%;
+    margin: 40px auto;
+    background: rgba(255,255,255,0.75);
+    padding: 25px;
+    border-radius: 16px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    line-height: 1.6;
+    font-size: 1rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+body.dark .about-section {
+    background: rgba(37, 72, 107, 0.7);
+}
+
+.about-section h3 {
+    margin-bottom: 12px;
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.about-section .highlight {
+    font-weight: 700;
+    color: #147bff;
 }
