@@ -3,21 +3,33 @@ const dropArea = document.getElementById("dropArea");
 const fileInput = document.getElementById("fileInput");
 const fileName = document.getElementById("fileName");
 
-/* THEME TOGGLE */
+/* ---------------------------------
+   THEME TOGGLE
+----------------------------------*/
 themeToggle.addEventListener("click", () => {
     document.body.classList.toggle("dark");
     themeToggle.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
 });
 
-/* DRAG & DROP */
-dropArea.addEventListener("click", () => fileInput.click());
+/* ---------------------------------
+   CLICK ON DROP AREA → OPEN FILE
+----------------------------------*/
+dropArea.addEventListener("click", () => {
+    fileInput.click();
+});
 
+/* ---------------------------------
+   WHEN FILE IS SELECTED
+----------------------------------*/
 fileInput.addEventListener("change", () => {
     if (fileInput.files.length > 0) {
         fileName.textContent = fileInput.files[0].name;
     }
 });
 
+/* ---------------------------------
+   DRAG & DROP HANDLING
+----------------------------------*/
 dropArea.addEventListener("dragover", (e) => {
     e.preventDefault();
     dropArea.classList.add("active");

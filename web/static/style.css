@@ -1,4 +1,6 @@
-/* BASE */
+/* ---------------------------------------------------
+   BASE
+----------------------------------------------------*/
 * {
     margin: 0;
     padding: 0;
@@ -18,7 +20,9 @@ body.dark {
     color: #dce6f3;
 }
 
-/* NAVBAR */
+/* ---------------------------------------------------
+   NAVBAR
+----------------------------------------------------*/
 .navbar {
     padding: 18px 40px;
     display: flex;
@@ -36,7 +40,9 @@ body.dark {
     cursor: pointer;
 }
 
-/* GRID LAYOUT */
+/* ---------------------------------------------------
+   GRID LAYOUT
+----------------------------------------------------*/
 .main-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -44,7 +50,9 @@ body.dark {
     gap: 30px;
 }
 
-/* CARD (GLASSMORPHISM) */
+/* ---------------------------------------------------
+   CARD (GLASSMORPHISM)
+----------------------------------------------------*/
 .card {
     background: rgba(255, 255, 255, 0.75);
     padding: 25px;
@@ -57,31 +65,37 @@ body.dark .card {
     background: rgba(20, 28, 44, 0.8);
 }
 
-/* BORDER GLOW ONLY - Clean */
+/* lift on hover */
+.card:hover {
+    transform: translateY(-4px);
+}
+
+/* BORDER GLOW ONLY */
 .card::after {
     content: "";
     position: absolute;
-    inset: 0;             /* covers the card exactly */
-    padding: 3px;         /* thickness of the glow border */
+    inset: 0;
     border-radius: inherit;
+    padding: 2px;   /* GLOW BORDER THICKNESS */
     background: linear-gradient(120deg, #147bff, #65e0ff, #1fd6c6);
+    background-size: 250% 250%;
+    mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    mask-composite: exclude; 
     -webkit-mask:
-        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0) content-box,
         linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
-    mask-composite: exclude;
+
     opacity: 0;
-    z-index: 1;
-    transition: opacity 0.3s ease;
+    transition: opacity .3s ease;
+    pointer-events: none;
 }
 
 .card:hover::after {
     opacity: 1;
     animation: glowMove 3s linear infinite;
-}
-
-.card:hover {
-    transform: translateY(-4px);
 }
 
 
@@ -91,7 +105,9 @@ body.dark .card {
     100% {background-position: 0% 50%;}
 }
 
-/* DRAG & DROP ZONE */
+/* ---------------------------------------------------
+   DRAG & DROP ZONE
+----------------------------------------------------*/
 .dropzone {
     height: 150px;
     border: 2px dashed #7ec9ff;
@@ -151,7 +167,9 @@ body.dark .card {
     color: #0a2540a9;
 }
 
-/* EXTAREA */
+/* ---------------------------------------------------
+   TEXTAREA
+----------------------------------------------------*/
 textarea {
     width: 100%;
     height: 170px;
@@ -170,7 +188,9 @@ body.dark textarea {
     color: #dce6f3;
 }
 
-/* BUTTON */
+/* ---------------------------------------------------
+   BUTTON
+----------------------------------------------------*/
 .btn-primary {
     width: 100%;
     padding: 14px;
@@ -190,7 +210,9 @@ body.dark textarea {
     transform: scale(1.03);
 }
 
-/* RESULTS */
+/* ---------------------------------------------------
+   RESULTS
+----------------------------------------------------*/
 .result-box {
     background: rgba(255,255,255,0.7);
     padding: 18px;
@@ -222,7 +244,9 @@ body.dark .result-box {
     margin-top: 10px;
 }
 
-/* FOOTER */
+/* ---------------------------------------------------
+   FOOTER
+----------------------------------------------------*/
 .footer {
     text-align: center;
     margin-top: 40px;

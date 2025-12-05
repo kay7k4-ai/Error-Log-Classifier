@@ -1,49 +1,58 @@
+import os
+import sys
 from flask import Flask, render_template, request
-import os, sys, joblib
+import joblib
 
-APP_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.abspath(os.path.join(APP_DIR, ".."))
-sys.path.append(ROOT)
+# PATH FIX
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.append(PROJECT_ROOT)
 
 from src.preprocessing.cleaner import clean_logs
+from src.model.predict import predict_log
 
-app = Flask(
-    __name__,
-    template_folder="templates",
-    static_folder="static"
-)
+app = Flask(__name__)
 
-model = joblib.load(os.path.join(ROOT, "model.pkl"))
-vectorizer = joblib.load(os.path.join(ROOT, "vectorizer.pkl"))
+# Load model and vectorizer
+MODEL_PATH = os.path.join(PROJECT_ROOT, "model.pkl")
+VEC_PATH = os.path.join(PROJECT_ROOT, "vectorizer.pkl")
+
+model = joblib.load(MODEL_PATH)
+vectorizer = joblib.load(VEC_PATH)
 
 
 @app.route("/", methods=["GET", "POST"])
-def home():
+def index():
+
+    pasted = ""
     result = None
-    pasted_text = ""
 
     if request.method == "POST":
 
-        pasted_text = request.form.get("paste_logs", "").strip()
+        pasted = request.form.get("paste_logs", "").strip()
+        file = request.files.get("logfile")
 
-        # Use pasted logs first
-        if pasted_text:
-            raw = [ln for ln in pasted_text.splitlines() if ln.strip()]
-        else:
-            file = request.files.get("logfile")
-            if not file or file.filename == "":
-                return render_template("index.html", result=None, pasted=pasted_text)
+        raw_logs = []
 
-            content = file.read().decode("utf-8", errors="ignore")
-            raw = [ln for ln in content.splitlines() if ln.strip()]
+        # 1️⃣ If user pasted logs → PRIORITY
+        if pasted:
+            raw_logs = pasted.splitlines()
 
-        cleaned = clean_logs(raw)
-        vec = vectorizer.transform(cleaned)
-        preds = model.predict(vec)
+        # 2️⃣ If file is uploaded → use it
+        elif file and file.filename:
+            raw_logs = file.read().decode("utf-8").splitlines()
 
-        result = list(zip(raw, preds))
+        # 3️⃣ If nothing given → return empty
+        if not raw_logs:
+            return render_template("index.html", result=None, pasted=pasted)
 
-    return render_template("index.html", result=result, pasted=pasted_text)
+        # Clean, vectorize, predict
+        cleaned = clean_logs(raw_logs)
+        vectors = vectorizer.transform(cleaned)
+        predictions = model.predict(vectors)
+
+        result = list(zip(raw_logs, predictions))
+
+    return render_template("index.html", result=result, pasted=pasted)
 
 
 if __name__ == "__main__":
