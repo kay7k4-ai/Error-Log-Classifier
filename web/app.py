@@ -1,47 +1,37 @@
 import os
 import sys
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import joblib
 
 # -------------------------------------------------------
-# ABSOLUTE PATH FIX (100% reliable everywhere)
+# ABSOLUTE PATH FIX
 # -------------------------------------------------------
-# Path of: Error-Log-Classifier/web/app.py
 CURRENT_FILE = os.path.abspath(__file__)
-
-# Move one level up → Error-Log-Classifier/
 PROJECT_ROOT = os.path.dirname(os.path.dirname(CURRENT_FILE))
-
-# Allow imports like src.preprocessing.cleaner
 sys.path.insert(0, PROJECT_ROOT)
 
-# Model paths
 MODEL_PATH = os.path.join(PROJECT_ROOT, "model.pkl")
-VEC_PATH = os.path.join(PROJECT_ROOT, "vectorizer.pkl")
+VEC_PATH   = os.path.join(PROJECT_ROOT, "vectorizer.pkl")
 
 # -------------------------------------------------------
 # LOAD MODEL + VECTORIZER
 # -------------------------------------------------------
-model = joblib.load(MODEL_PATH)
+model      = joblib.load(MODEL_PATH)
 vectorizer = joblib.load(VEC_PATH)
 
-# Import AFTER fixing sys.path
 from src.preprocessing.cleaner import clean_logs
-from src.model.predict import predict_log
-
 
 # -------------------------------------------------------
 # FLASK APP
 # -------------------------------------------------------
 app = Flask(
-    __name__, 
-    static_folder="static", 
+    __name__,
+    static_folder="static",
     template_folder="templates"
 )
 
-
 # -------------------------------------------------------
-# ROUTE — MAIN PAGE
+# ROUTE — MAIN PAGE (kept exactly as before)
 # -------------------------------------------------------
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -49,32 +39,49 @@ def index():
     pasted = ""
 
     if request.method == "POST":
-        # ------------------------------
-        # 1. Get pasted logs
-        # ------------------------------
         pasted = request.form.get("paste_logs", "").strip()
+        file   = request.files.get("logfile")
 
-        # ------------------------------
-        # 2. Get uploaded file
-        # ------------------------------
-        file = request.files.get("logfile")
-
-        if file and file.filename:  
+        if file and file.filename:
             pasted = file.read().decode("utf-8")
 
-        # ------------------------------
-        # 3. Classify logs (only if input exists)
-        # ------------------------------
         if pasted:
-            raw_lines = [line for line in pasted.split("\n") if line.strip()]
-
-            cleaned = clean_logs(raw_lines)
-            vectors = vectorizer.transform(cleaned)
+            raw_lines   = [line for line in pasted.split("\n") if line.strip()]
+            cleaned     = clean_logs(raw_lines)
+            vectors     = vectorizer.transform(cleaned)
             predictions = model.predict(vectors)
-
-            result = list(zip(raw_lines, predictions))
+            result      = list(zip(raw_lines, predictions))
 
     return render_template("index.html", result=result, pasted=pasted)
+
+
+# -------------------------------------------------------
+# ROUTE — /classify  (used by the new JS frontend)
+# Accepts:  POST  { "logs": ["line1", "line2", ...] }
+# Returns:  { "results": [{ "text": "line1", "type": "ERROR" }, ...] }
+# -------------------------------------------------------
+@app.route("/classify", methods=["POST"])
+def classify():
+    data = request.get_json(silent=True)
+
+    if not data or "logs" not in data:
+        return jsonify({"error": "Send JSON body: {\"logs\": [\"line1\", \"line2\", ...]}"}), 400
+
+    raw_lines = [str(line) for line in data["logs"] if str(line).strip()]
+
+    if not raw_lines:
+        return jsonify({"results": []}), 200
+
+    cleaned     = clean_logs(raw_lines)
+    vectors     = vectorizer.transform(cleaned)
+    predictions = model.predict(vectors)
+
+    results = [
+        {"text": raw, "type": str(pred)}
+        for raw, pred in zip(raw_lines, predictions)
+    ]
+
+    return jsonify({"results": results}), 200
 
 
 # -------------------------------------------------------

@@ -14,7 +14,7 @@ var fileIn      = document.getElementById('fileIn');
 var classifyBtn = document.getElementById('classifyBtn');
 var clearBtn    = document.getElementById('clearBtn');
 
-/* ---------- Classify (calls Flask backend) ----------------- */
+/* ---------- Classify — calls Flask /classify --------------- */
 async function classifyLogs() {
   var raw = logInput.value.trim();
   if (!raw) return;
@@ -35,12 +35,7 @@ async function classifyLogs() {
       throw new Error('Server returned ' + resp.status);
     }
 
-    var data = await resp.json();
-
-    /* Normalise whatever your Flask endpoint returns.
-       Supports two common shapes:
-         1. { results: [{ text, type }, ...] }
-         2. [{ text, type }, ...]                              */
+    var data    = await resp.json();
     var results = Array.isArray(data) ? data : data.results;
 
     allLogs = results.map(function (item, i) {
@@ -68,14 +63,14 @@ async function classifyLogs() {
   filterRow.style.display = 'flex';
 }
 
-/* ---------- Normalise type strings from backend ------------ */
+/* ---------- Normalise backend label strings ---------------- */
 function normaliseType(raw) {
   var u = String(raw).toUpperCase().trim();
   if (u === 'CRITICAL' || u === 'FATAL' || u === 'CRIT') return 'crit';
   if (u === 'ERROR'    || u === 'ERR')                   return 'err';
   if (u === 'WARNING'  || u === 'WARN')                  return 'warn';
   if (u === 'INFO'     || u === 'DEBUG' || u === 'NOTICE') return 'info';
-  return 'info'; /* safe default */
+  return 'info';
 }
 
 /* ---------- Rendering -------------------------------------- */
@@ -87,8 +82,8 @@ function renderLogs(logs) {
   if (!logs.length) {
     logList.innerHTML =
       '<div class="empty-state">' +
-      '  <div class="empty-icon">&#11041;</div>' +
-      '  <div class="empty-text">No results for this filter.</div>' +
+      '<div class="empty-icon">&#11041;</div>' +
+      '<div class="empty-text">No results for this filter.</div>' +
       '</div>';
     resCount.textContent = '';
     return;
@@ -98,16 +93,26 @@ function renderLogs(logs) {
     var ts  = '';
     var msg = escapeHtml(l.text);
 
-    var m = l.text.match(/^(\[[^\]]+\])\s*(.*)/);
-    if (m) {
-      ts  = '<span class="ts">' + escapeHtml(m[1]) + ' </span>';
-      msg = escapeHtml(m[2]);
+    /*
+      Supports both log formats:
+        1. [2024-01-15 09:23:11] INFO message     (bracket style)
+        2. 2024-11-02 10:33:12 – ERROR – message  (your actual format)
+    */
+    var m1 = l.text.match(/^(\[[^\]]+\])\s*(.*)/);
+    var m2 = l.text.match(/^(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})\s*(.*)/);
+
+    if (m1) {
+      ts  = '<span class="ts">' + escapeHtml(m1[1]) + ' </span>';
+      msg = escapeHtml(m1[2]);
+    } else if (m2) {
+      ts  = '<span class="ts">' + escapeHtml(m2[1]) + ' </span>';
+      msg = escapeHtml(m2[2]);
     }
 
     return (
       '<div class="log-item ' + l.type + '">' +
-      '  <span class="badge ' + l.type + '">' + labelOf(l.type) + '</span>' +
-      '  <span class="log-text">' + ts + '<span class="msg">' + msg + '</span></span>' +
+      '<span class="badge ' + l.type + '">' + labelOf(l.type) + '</span>' +
+      '<span class="log-text">' + ts + '<span class="msg">' + msg + '</span></span>' +
       '</div>'
     );
   }).join('');
@@ -147,8 +152,9 @@ function showError(msg) {
   ].join(';');
 
   banner.innerHTML =
-    '<span>⚠ ' + escapeHtml(msg) + '</span>' +
-    '<button onclick="this.parentElement.remove()" style="background:none;border:none;color:#f87171;cursor:pointer;font-size:16px;line-height:1">×</button>';
+    '<span>&#9888; ' + escapeHtml(msg) + '</span>' +
+    '<button onclick="this.parentElement.remove()" ' +
+    'style="background:none;border:none;color:#f87171;cursor:pointer;font-size:16px;line-height:1">&times;</button>';
 
   logList.parentElement.insertBefore(banner, logList);
 }
@@ -182,16 +188,16 @@ function resetFilterChips() {
 
 /* ---------- Clear ------------------------------------------ */
 function clearAll() {
-  logInput.value      = '';
-  allLogs             = [];
-  activeFilter        = 'all';
+  logInput.value          = '';
+  allLogs                 = [];
+  activeFilter            = 'all';
   filterRow.style.display = 'none';
   resCount.textContent    = '';
 
   logList.innerHTML =
     '<div class="empty-state">' +
-    '  <div class="empty-icon">&#11041;</div>' +
-    '  <div class="empty-text">No logs classified yet.<br />Paste logs and hit Classify.</div>' +
+    '<div class="empty-icon">&#11041;</div>' +
+    '<div class="empty-text">No logs classified yet.<br />Paste logs and hit Classify.</div>' +
     '</div>';
 
   resetFilterChips();
