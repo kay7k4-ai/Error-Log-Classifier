@@ -1,131 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Error Log Classifier</title>
-        <link
-            rel="stylesheet"
-            href="{{ url_for('static', filename='style.css') }}"
-        />
-    </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LogClassifier — Error Log Classifier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
 
-    <body>
-        <!-- NAVBAR -->
-        <div class="navbar">
-            <div class="logo">⚡ LogClassifier</div>
-            <div class="theme-toggle" id="themeToggle">🌙</div>
+  <div class="app">
+
+    <!-- NAV -->
+    <nav class="nav">
+      <div class="logo">
+        <div class="logo-icon">LC</div>
+        <span class="logo-text"><span>Log</span>Classifier</span>
+      </div>
+      <div class="badge-nav">v1.0 &middot; OJT Project</div>
+    </nav>
+
+    <!-- HERO -->
+    <div class="hero">
+      <h1>Classify logs<br><span>instantly</span></h1>
+      <p>// paste or upload &middot; get labeled &middot; debug faster</p>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat green">
+        <div class="stat-num" id="cnt-info">0</div>
+        <div class="stat-label">Info</div>
+      </div>
+      <div class="stat yellow">
+        <div class="stat-num" id="cnt-warn">0</div>
+        <div class="stat-label">Warning</div>
+      </div>
+      <div class="stat red">
+        <div class="stat-num" id="cnt-err">0</div>
+        <div class="stat-label">Error</div>
+      </div>
+      <div class="stat orange">
+        <div class="stat-num" id="cnt-crit">0</div>
+        <div class="stat-label">Critical</div>
+      </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="main-grid">
+
+      <!-- INPUT PANEL -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span class="dot"></span>Input
+          </div>
         </div>
 
-        <!-- MAIN GRID -->
-        <div class="main-container">
-            <!-- LEFT PANEL (Input) -->
-            <div class="card">
-                <h2>Input Logs</h2>
-                <p class="subtext">
-                    Upload a .txt/.log file or paste logs manually
-                </p>
-
-                <form
-                    id="uploadForm"
-                    method="POST"
-                    enctype="multipart/form-data"
-                >
-                    <!-- Drag and drop area -->
-                    <label class="dropzone" id="dropArea">
-                        <input
-                            type="file"
-                            id="fileInput"
-                            name="logfile"
-                            accept=".txt,.log"
-                        />
-                        <div>
-                            📄 Drag & Drop log file<br /><span class="small"
-                                >or click here</span
-                            >
-                        </div>
-                    </label>
-
-                    <div id="fileName" class="file-name">No file selected</div>
-
-                    <div class="or">— OR —</div>
-
-                    <!-- Paste Logs -->
-                    <textarea
-                        id="pasteBox"
-                        name="paste_logs"
-                        placeholder="Paste logs here..."
-                    >
-{{ pasted if pasted }}</textarea
-                    >
-
-                    <!-- Submit -->
-                    <button class="btn-primary" id="submitBtn" type="submit">
-                        Classify Logs
-                    </button>
-                    
-                    <button type="button" id="clearBtn" class="btn-secondary">
-                        Clear All
-                    </button>
-                </form>
-            </div>
-
-            <!-- RIGHT PANEL (Results) -->
-            <div class="card">
-                <h2>Results</h2>
-
-                {% if result %}
-                <div class="result-box">
-                    {% for line, cat in result %}
-                    <div class="result-line">
-                        <span class="r-line">{{ line }}</span>
-                        <span class="r-cat {{ cat }}">{{ cat }}</span>
-                    </div>
-                    {% endfor %}
-                </div>
-                {% else %}
-                <div class="empty">No logs classified yet.</div>
-                {% endif %}
-            </div>
+        <div class="drop-zone" id="dropzone">
+          <div class="drop-zone-icon">&#11014;</div>
+          <p>Drop <span>.txt / .log</span> here or click to browse</p>
+          <input type="file" id="fileIn" accept=".txt,.log" />
         </div>
 
-        <div class="about-section">
-            <h3>About This Project</h3>
-            <p>
-                The <strong>Error Log Classifier</strong> is a mini-tool built
-                to help developers quickly understand large log files by
-                automatically categorizing each log line into
-                <span class="highlight">ERROR</span>,
-                <span class="highlight">WARNING</span>,
-                <span class="highlight">INFO</span>, or
-                <span class="highlight">CRITICAL</span>.
-            </p>
-
-            <p>
-                Debugging becomes faster when logs are organized — and that is
-                exactly what this tool tries to simplify. Just upload a
-                <strong>.txt</strong> or <strong>.log</strong> file, or paste
-                your logs manually, and the classifier instantly analyzes and
-                labels them using machine learning.
-            </p>
-
-            <p>
-                This project was created as part of our
-                <strong>OJT (On-the-Job Training)</strong>. Even though the
-                website may not be perfect, we genuinely worked hard to build it
-                — from learning Flask, handling machine learning models, to
-                designing the UI and making it user-friendly.
-            </p>
-
-            <p>
-                We hope to improve this tool further in the future with more
-                features, smarter classifications, and a better interface. Thank
-                you for checking out our project! 💙
-            </p>
+        <div class="textarea-wrap">
+          <textarea
+            id="logInput"
+            rows="8"
+            placeholder="[2024-01-15 09:23:11] INFO  Server started on port 8080&#10;[2024-01-15 09:23:14] ERROR Database connection timeout&#10;[2024-01-15 09:23:15] WARNING High memory usage: 87%&#10;[2024-01-15 09:23:20] CRITICAL Disk space critical: 2% remaining"
+          ></textarea>
         </div>
 
-        <div class="footer">Made for OJT • © 2025</div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="classifyBtn">&#9889; Classify</button>
+          <button class="btn btn-ghost" id="clearBtn">Clear</button>
+        </div>
+      </div>
 
-        <script src="{{ url_for('static', filename='script.js') }}"></script>
-    </body>
+      <!-- OUTPUT PANEL -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span class="dot green pulse"></span>Output
+          </div>
+          <span class="res-count" id="res-count"></span>
+        </div>
+
+        <div class="filter-row" id="filterRow">
+          <button class="filter-chip active-all" data-filter="all">All</button>
+          <button class="filter-chip" data-filter="info">INFO</button>
+          <button class="filter-chip" data-filter="warn">WARN</button>
+          <button class="filter-chip" data-filter="err">ERROR</button>
+          <button class="filter-chip" data-filter="crit">CRITICAL</button>
+        </div>
+
+        <div class="log-list" id="logList">
+          <div class="empty-state">
+            <div class="empty-icon">&#11041;</div>
+            <div class="empty-text">No logs classified yet.<br />Paste logs and hit Classify.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ABOUT -->
+    <div class="about">
+      <h3>About this project</h3>
+      <p>
+        The Error Log Classifier helps developers quickly understand large log files by
+        automatically categorizing each line into ERROR, WARNING, INFO, or CRITICAL
+        using machine learning.
+      </p>
+      <p>
+        Built during our OJT training — from learning Flask and ML models to shipping a
+        working UI. We're genuinely proud of this one &#128153;
+      </p>
+      <div class="tag-row">
+        <span class="tech-tag">Python</span>
+        <span class="tech-tag">Flask</span>
+        <span class="tech-tag">Machine Learning</span>
+        <span class="tech-tag">OJT 2025</span>
+      </div>
+    </div>
+
+    <div class="footer">Made for OJT &middot; &copy; 2025 &middot; Error Log Classifier</div>
+
+  </div>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script></body>
 </html>
